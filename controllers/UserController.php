@@ -33,16 +33,24 @@ class UserController {
             $this->userModel->medical_exam_date = !empty($_POST['medical_exam']) ? $_POST['medical_exam'] : null;
             $this->userModel->smoke_chamber_date = !empty($_POST['smoke_chamber']) ? $_POST['smoke_chamber'] : null;
 
-            if ($this->userModel->create()) {
+            // Sprawdzamy, czy wybrano funkcję, ale zapomniano o dacie
+            if (!empty($_POST['funkcja_zarzad']) && empty($_POST['data_powolania_zarzad'])) {
+                $blad = "Błąd: Jeśli druh pełni funkcję w zarządzie, musisz podać datę powołania!";
+            } else {
+                if ($this->userModel->create()) {
                 // LOGOWANIE ZDARZENIA
                 $logger = new Log($this->db);
                 $logger->create($_SESSION['user_id'], "Dodano nowego druha: " . $this->userModel->first_name . " " . $this->userModel->last_name);
                 
                 header("Location: index.php?action=index");
                 exit;
-            } else {
-                $blad = "Nie udało się dodać strażaka. (Sprawdź czy login nie jest już zajęty)";
+                } else {
+                    $blad = "Nie udało się dodać strażaka. (Sprawdź czy login nie jest już zajęty)";
+                }
             }
+
+
+            
         }
         require_once 'views/add_user.php';
     }
