@@ -1,0 +1,10 @@
+# Ignoruj pliki konfiguracyjne z prawdziwymi hasłami
+config/database.php
+
+# Pliki systemowe
+.DS_Store
+Thumbs.db
+
+# Logi błędów
+error_log
+*.log
