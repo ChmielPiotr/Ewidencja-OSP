@@ -57,7 +57,7 @@
                     (<?php 
                         if (isset($_SESSION['role'])) {
                             if ($_SESSION['role'] === 'superadmin') echo 'Super Admin';
-                            elseif ($_SESSION['role'] === 'admin') echo 'Naczelnik';
+                            elseif ($_SESSION['role'] === 'admin') echo 'Administrator';
                             else echo 'Strażak';
                         }
                     ?>)

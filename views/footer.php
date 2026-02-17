@@ -2,7 +2,7 @@
         <div class="container">
             <small class="text-white-50">
                 &copy; <?= date('Y') ?> System Ewidencji OSP. Wszelkie prawa zastrzeżone.<br>
-                <span class="badge bg-secondary mt-1">Wersja 1.0.0</span>
+                <span class="badge bg-secondary mt-1">Wersja 1.0.1</span>
             </small>
         </div>
     </footer>
