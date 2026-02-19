@@ -1,6 +1,9 @@
 # 🚒 System Ewidencji OSP (Ochotniczej Straży Pożarnej)
 
-Autorski system webowy stworzony z myślą o cyfryzacji i ułatwieniu zarządzania jednostkami Ochotniczej Straży Pożarnej. Aplikacja została napisana w czystym PHP z wykorzystaniem architektury **MVC (Model-View-Controller)** oraz bazy danych MySQL.
+Autorski system webowy stworzony z myślą o cyfryzacji i ułatwieniu zarządzania jednostkami Ochotniczej Straży Pożarnej. Aplikacja została napisana w PHP z wykorzystaniem architektury **MVC (Model-View-Controller)** oraz bazy danych MySQL.
+<img width="1189" height="552" alt="image" src="https://github.com/user-attachments/assets/501ca008-d311-4f6b-b127-8b8f5a91e286" />
+<img width="1202" height="777" alt="image" src="https://github.com/user-attachments/assets/d8e9d57f-6b2e-48f0-b62b-b80dcab8cb67" />
+
 
 ## ⚙️ Funkcjonalności
 
