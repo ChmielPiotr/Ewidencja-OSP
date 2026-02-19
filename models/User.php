@@ -23,9 +23,10 @@ class User {
 
     // Pobieranie wszystkich użytkowników z dołączoną ewentualną funkcją
     public function readAll() {
-        $query = "SELECT u.*, b.funkcja as funkcja_zarzad 
+        $query = "SELECT u.*, b.funkcja  
                   FROM " . $this->table_name . " u 
                   LEFT JOIN board_members b ON u.id = b.user_id 
+                  WHERE u.role != 'superadmin'
                   ORDER BY u.created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
@@ -226,7 +227,7 @@ class User {
         $query = "UPDATE " . $this->table_name . " SET email = :email, password = :password WHERE id = :id";
         $stmt = $this->conn->prepare($query);
 
-        $email = htmlspecialchars(strip_tags($email));
+        $email = !empty($email) ? htmlspecialchars(strip_tags($email)) : null;        
         
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $password);

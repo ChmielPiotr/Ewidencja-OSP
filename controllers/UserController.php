@@ -77,15 +77,20 @@ class UserController {
             $this->userModel->medical_exam_date = !empty($_POST['medical_exam']) ? $_POST['medical_exam'] : null;
             $this->userModel->smoke_chamber_date = !empty($_POST['smoke_chamber']) ? $_POST['smoke_chamber'] : null;
 
-            if ($this->userModel->update()) {
-                // LOGOWANIE ZDARZENIA
-                $logger = new Log($this->db);
-                $logger->create($_SESSION['user_id'], "Zaktualizowano dane druha: " . $this->userModel->first_name . " " . $this->userModel->last_name);
-
-                header("Location: index.php?action=index");
-                exit;
+            // Dodajemy zabezpieczenie również do edycji!
+            if (!empty($_POST['funkcja_zarzad']) && empty($_POST['data_powolania_zarzad'])) {
+                $blad = "Błąd: Jeśli druh pełni funkcję w zarządzie, musisz podać datę powołania!";
             } else {
-                $blad = "Nie udało się zaktualizować danych.";
+                if ($this->userModel->update()) {
+                    // LOGOWANIE ZDARZENIA
+                    $logger = new Log($this->db);
+                    $logger->create($_SESSION['user_id'], "Zaktualizowano dane druha: " . $this->userModel->first_name . " " . $this->userModel->last_name);
+
+                    header("Location: index.php?action=index");
+                    exit;
+                } else {
+                    $blad = "Nie udało się zaktualizować danych.";
+                }
             }
         } else {
             if (!$this->userModel->readOne($this->userModel->id)) {
@@ -142,8 +147,8 @@ class UserController {
                 $logger = new Log($this->db);
                 $logger->create($_SESSION['user_id'], "Wykonano twardy reset hasła dla: " . $this->userModel->first_name . " " . $this->userModel->last_name);
 
-                header("Location: index.php?action=index");
-                exit;
+                // Zamiast przekierowania, ustawiamy komunikat o sukcesie!
+                $sukces = "Hasło zostało pomyślnie zmienione! Możesz przekazać je druhowi.";
             } else {
                 $blad = "Wystąpił błąd podczas resetowania hasła.";
             }

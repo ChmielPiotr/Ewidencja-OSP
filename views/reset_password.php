@@ -11,18 +11,28 @@
             <div class="alert alert-danger"><?= $blad ?></div>
         <?php endif; ?>
 
-        <form action="index.php?action=reset_password&id=<?= $this->userModel->id ?>" method="POST">
-            <div class="mb-4">
-                <label class="form-label">Wpisz nowe, tymczasowe hasło</label>
-                <input type="text" name="new_password" class="form-control" required placeholder="np. Start123!">
-                <div class="form-text">Podaj to hasło druhowi. Będzie mógł je zmienić w swoim profilu.</div>
+        <?php if (isset($sukces)): ?>
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle-fill"></i> <strong>Sukces!</strong> <?= $sukces ?>
             </div>
-            
-            <div class="d-flex justify-content-between">
-                <a href="index.php?action=index" class="btn btn-secondary">Anuluj</a>
-                <button type="submit" class="btn btn-warning text-dark fw-bold">Zmień hasło</button>
+            <div class="d-grid mt-4">
+                <a href="index.php?action=index" class="btn btn-secondary">Wróć do ewidencji</a>
             </div>
-        </form>
+        <?php else: ?>
+            <form action="index.php?action=<?= htmlspecialchars($_GET['action']) ?>&id=<?= htmlspecialchars($_GET['id']) ?>" method="POST">
+                <div class="mb-4">
+                    <label class="form-label">Wpisz nowe, tymczasowe hasło</label>
+                    <input type="text" name="new_password" class="form-control" required placeholder="np. Start123!">
+                    <div class="form-text">Podaj to hasło druhowi. Będzie mógł je zmienić w swoim profilu.</div>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="index.php?action=index" class="btn btn-secondary">Anuluj</a>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold">Zmień hasło</button>
+                </div>
+            </form>
+        <?php endif; ?>
+
     </div>
 </div>
 
