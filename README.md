@@ -51,6 +51,7 @@ Hasło: admin
 Ważne: Pamiętaj, aby po pierwszym logowaniu natychmiast zmienić hasło SuperAdmina ze względów bezpieczeństwa!
 
 📂 Struktura projektu (Architektura MVC)
+
 /controllers - Mózg aplikacji, logika poszczególnych modułów.
 
 /models - Reprezentacja danych i bezpośrednia komunikacja z bazą MySQL (PDO).
