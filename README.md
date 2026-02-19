@@ -44,7 +44,7 @@ Skonfiguruj połączenie z bazą danych w swoim głównym pliku inicjującym (np
 🔐 Pierwsze logowanie
 Baza danych z pliku install.sql zawiera domyślne konto Głównego Administratora, niezbędne do pierwszego uruchomienia systemu:
 
-Login: admin (lub Twój domyślny login)
+Login: admin 
 
 Hasło: admin
 
