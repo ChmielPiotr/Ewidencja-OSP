@@ -1,6 +1,6 @@
 <?php include 'views/header.php'; ?>
 
-<div class="card shadow-sm border-0" style="max-width: 600px; margin: 0 auto;">
+<div class="card shadow-sm border-0" style="max-width: 1000px; margin: 0 auto;">
     <div class="card-header bg-primary text-white">
         <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Edytuj dane strażaka</h5>
     </div>
@@ -11,24 +11,26 @@
 
         <form action="index.php?action=edit&id=<?= $druh['id'] ?>" method="POST">
             
-            <div class="mb-3">
-                <label class="form-label">Imię</label>
-                <input type="text" name="first_name" class="form-control" value="<?= htmlspecialchars($druh['first_name']) ?>" required>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Imię</label>
+                    <input type="text" name="first_name" class="form-control" value="<?= htmlspecialchars($druh['first_name']) ?>" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nazwisko</label>
+                    <input type="text" name="last_name" class="form-control" value="<?= htmlspecialchars($druh['last_name']) ?>" required>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Nazwisko</label>
-                <input type="text" name="last_name" class="form-control" value="<?= htmlspecialchars($druh['last_name']) ?>" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Login w systemie (wymagany)</label>
-                <input type="text" name="login" class="form-control" value="<?= htmlspecialchars($druh['login'] ?? '') ?>" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">E-mail (opcjonalny)</label>
-                <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($druh['email'] ?? '') ?>">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Login w systemie (wymagany)</label>
+                    <input type="text" name="login" class="form-control" value="<?= htmlspecialchars($druh['login'] ?? '') ?>" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">E-mail (opcjonalny)</label>
+                    <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($druh['email'] ?? '') ?>">
+                </div>
             </div>
 
             <div class="mb-3 border border-warning p-3 rounded bg-light">
@@ -38,7 +40,9 @@
                     <option value="admin" <?= $druh['role'] === 'admin' ? 'selected' : '' ?>>Administrator (Naczelnik)</option>
                 </select>
             </div>
+            
             <hr>
+            
             <div class="mb-3 border border-danger p-3 rounded bg-white shadow-sm">
                 <label class="form-label fw-bold text-danger"><i class="bi bi-bank"></i> Przynależność do Zarządu OSP</label>
                 <div class="row">
@@ -63,21 +67,13 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Badania lekarskie (ważne do)</label>
-                <input type="date" name="medical_exam" class="form-control" value="<?= $druh['medical_exam_date'] ?>">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Komora dymowa (ważna do)</label>
-                <input type="date" name="smoke_chamber" class="form-control" value="<?= $druh['smoke_chamber_date'] ?>">
-            </div>
-
             <div class="d-flex justify-content-between mt-4">
                 <a href="index.php?action=index" class="btn btn-secondary">Wróć</a>
-                <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                <button type="submit" class="btn btn-primary">Zapisz zmiany w profilu</button>
             </div>
         </form>
+
+        
     </div>
 </div>
 

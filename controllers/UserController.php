@@ -30,9 +30,7 @@ class UserController {
             
             $this->userModel->funkcja_zarzad = !empty($_POST['funkcja_zarzad']) ? $_POST['funkcja_zarzad'] : null;
             $this->userModel->data_powolania_zarzad = !empty($_POST['data_powolania_zarzad']) ? $_POST['data_powolania_zarzad'] : null;
-            $this->userModel->medical_exam_date = !empty($_POST['medical_exam']) ? $_POST['medical_exam'] : null;
-            $this->userModel->smoke_chamber_date = !empty($_POST['smoke_chamber']) ? $_POST['smoke_chamber'] : null;
-
+            
             // Sprawdzamy, czy wybrano funkcję, ale zapomniano o dacie
             if (!empty($_POST['funkcja_zarzad']) && empty($_POST['data_powolania_zarzad'])) {
                 $blad = "Błąd: Jeśli druh pełni funkcję w zarządzie, musisz podać datę powołania!";
@@ -74,8 +72,6 @@ class UserController {
             
             $this->userModel->funkcja_zarzad = !empty($_POST['funkcja_zarzad']) ? $_POST['funkcja_zarzad'] : null;
             $this->userModel->data_powolania_zarzad = !empty($_POST['data_powolania_zarzad']) ? $_POST['data_powolania_zarzad'] : null;
-            $this->userModel->medical_exam_date = !empty($_POST['medical_exam']) ? $_POST['medical_exam'] : null;
-            $this->userModel->smoke_chamber_date = !empty($_POST['smoke_chamber']) ? $_POST['smoke_chamber'] : null;
 
             // Dodajemy zabezpieczenie również do edycji!
             if (!empty($_POST['funkcja_zarzad']) && empty($_POST['data_powolania_zarzad'])) {
@@ -110,8 +106,62 @@ class UserController {
             'funkcja_zarzad' => $this->userModel->funkcja_zarzad,
             'data_powolania_zarzad' => $this->userModel->data_powolania_zarzad
         ];
-
+        $historia_badan = $this->userModel->getMedicalHistory($this->userModel->id);
+        $historia_komory = $this->userModel->getSmokeChamberHistory($this->userModel->id);
         require_once 'views/edit_user.php';
+    }
+    // ==========================================
+    // MODUŁ BADAŃ LEKARSKICH I KOMORY
+    // ==========================================
+    
+    // 1. Wyświetla zbiorczą listę wszystkich druhów i ich status
+    public function examsList() {
+        $stmt = $this->userModel->readAll();
+        $strazacy = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        require_once 'views/exams_list.php';
+    }
+
+    // 2. Wyświetla historię konkretnego druha
+    public function userExams() {
+        if (!isset($_GET['id'])) { header("Location: index.php?action=exams"); exit; }
+        
+        $this->userModel->readOne($_GET['id']);
+        $druh = [
+            'id' => $this->userModel->id,
+            'first_name' => $this->userModel->first_name,
+            'last_name' => $this->userModel->last_name
+        ];
+        
+        $historia_badan = $this->userModel->getMedicalHistory($_GET['id']);
+        $historia_komory = $this->userModel->getSmokeChamberHistory($_GET['id']);
+        
+        require_once 'views/user_exams.php';
+    }
+
+    // 3. Dodaje nowy wpis do historii
+    public function addExam() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
+            $user_id = $_POST['user_id'];
+            $typ = $_POST['exam_type'];
+            $date_from = $_POST['date_from'];
+            $date_to = $_POST['date_to'];
+            $notes = !empty($_POST['notes']) ? trim($_POST['notes']) : null;
+
+            if ($typ === 'medical') {
+                $this->userModel->addMedicalExam($user_id, $date_from, $date_to, $notes);
+                $log_msg = "Dodano badanie lekarskie";
+            } else {
+                $this->userModel->addSmokeChamberTest($user_id, $date_from, $date_to, $notes);
+                $log_msg = "Dodano test w komorze dymowej";
+            }
+            
+            $logger = new Log($this->db);
+            $logger->create($_SESSION['user_id'], $log_msg . " dla druha ID: " . $user_id);
+
+            // Zmienione przekierowanie! Teraz wraca do profilu badań, a nie do edycji usera!
+            header("Location: index.php?action=userExams&id=" . $user_id . "&success=exam_added");
+            exit;
+        }
     }
 
     public function delete() {

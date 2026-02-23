@@ -11,6 +11,9 @@ require_once 'controllers/DashboardController.php';
 require_once 'controllers/BoardController.php';
 require_once 'controllers/LogController.php';
 require_once 'controllers/VehicleController.php';
+require_once 'controllers/IncidentController.php';
+require_once 'controllers/WorkController.php';
+require_once 'controllers/DrillController.php';
 
 
 $database = new Database();
@@ -22,6 +25,9 @@ $dashboardController = new DashboardController($db);
 $boardController = new BoardController($db);
 $logController = new LogController($db);
 $vehicleController = new VehicleController($db);
+$incidentController = new IncidentController($db);
+$workController = new WorkController($db);
+$drillController = new DrillController($db);
 
 $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 
@@ -110,6 +116,82 @@ switch ($action) {
         if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $userController->exportPdf();
         break;
+    // --- MODUŁ PRAC GOSPODARCZYCH ---
+    case 'works':
+        $workController->index();
+        break;
+    case 'addWork':
+        $workController->add();
+        break;
+    case 'viewWork':
+        $workController->view();
+        break;
+    case 'editWork':
+        $workController->edit();
+        break;
+    case 'deleteWork':
+        $workController->delete();
+        break;
+    case 'exportWorksPdf':
+        $workController->exportPdf();
+        break;
+    case 'exportSingleWorkPdf':
+        $workController->exportSinglePdf();
+        break;
+
+    // --- MODUŁ ĆWICZEŃ ---
+    case 'drills':
+        $drillController->index();
+        break;
+    case 'addDrill':
+        $drillController->add();
+        break;
+    case 'editDrill':
+        $drillController->edit();
+        break;
+    case 'deleteDrill':
+        $drillController->delete();
+        break;
+    case 'viewDrill':
+        $drillController->view();
+        break;
+    case 'exportDrillsPdf':
+        $drillController->exportPdf();
+        break;
+    case 'exportSingleDrillPdf':
+        $drillController->exportSinglePdf();
+        break;
+
+    
+    // ---------------
+    case 'exams':
+        $userController->examsList();
+        break;
+    case 'userExams':
+        $userController->userExams();
+        break;
+    case 'addExam':
+        $userController->addExam();
+        break;
+    
+    
+    case 'incidents':
+        $incidentController->index();
+        break;
+    case 'addIncident':
+        $incidentController->add();
+        break;
+    case 'viewIncident':
+        $incidentController->view();
+        break;
+    case 'exportIncidentsPdf':
+        $incidentController->exportAllPdf();
+        break;
+    case 'exportSingleIncidentPdf':
+        $incidentController->exportSinglePdf();
+        break;
+
+    
 
     // --- DOMYŚLNIE (Jeśli wpiszesz bzdury w URL) ---
     default:

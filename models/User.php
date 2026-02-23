@@ -23,11 +23,20 @@ class User {
 
     // Pobieranie wszystkich użytkowników z dołączoną ewentualną funkcją
     public function readAll() {
-        $query = "SELECT u.*, b.funkcja  
+        $query = "SELECT 
+                    u.id, 
+                    u.first_name, 
+                    u.last_name, 
+                    u.role, 
+                    u.login, 
+                    b.funkcja,
+                    (SELECT m.date_to FROM medical_exams m WHERE m.user_id = u.id ORDER BY m.date_to DESC LIMIT 1) as medical_exam_date,
+                    (SELECT s.date_to FROM smoke_chamber_tests s WHERE s.user_id = u.id ORDER BY s.date_to DESC LIMIT 1) as smoke_chamber_date
                   FROM " . $this->table_name . " u 
                   LEFT JOIN board_members b ON u.id = b.user_id 
-                  WHERE u.role != 'superadmin'
-                  ORDER BY u.created_at DESC";
+                  WHERE u.role != 'superadmin' 
+                  ORDER BY u.last_name ASC";
+                  
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
@@ -46,30 +55,37 @@ class User {
 
     // Pobieranie jednego użytkownika do edycji
     public function readOne($id) {
-        $query = "SELECT u.*, b.funkcja as funkcja_zarzad, b.data_powolania as data_powolania_zarzad 
-                  FROM " . $this->table_name . " u 
-                  LEFT JOIN board_members b ON u.id = b.user_id 
-                  WHERE u.id = ? LIMIT 0,1";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $id);
-        $stmt->execute();
+    $query = "SELECT 
+                u.id, u.first_name, u.last_name, u.login, u.email, u.role,
+                (SELECT m.date_to FROM medical_exams m WHERE m.user_id = u.id ORDER BY m.date_to DESC LIMIT 1) as medical_exam_date,
+                (SELECT s.date_to FROM smoke_chamber_tests s WHERE s.user_id = u.id ORDER BY s.date_to DESC LIMIT 1) as smoke_chamber_date,
+                b.funkcja as funkcja_zarzad, 
+                b.data_powolania as data_powolania_zarzad
+              FROM " . $this->table_name . " u
+              LEFT JOIN board_members b ON u.id = b.user_id
+              WHERE u.id = :id 
+              LIMIT 0,1";
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
 
-        if ($row) {
-            $this->first_name = $row['first_name'];
-            $this->last_name = $row['last_name'];
-            $this->login = $row['login'];
-            $this->email = $row['email'];
-            $this->password = $row['password'];
-            $this->role = $row['role'];
-            $this->medical_exam_date = $row['medical_exam_date'];
-            $this->smoke_chamber_date = $row['smoke_chamber_date'];
-            $this->funkcja_zarzad = isset($row['funkcja_zarzad']) ? $row['funkcja_zarzad'] : null;
-            $this->data_powolania_zarzad = isset($row['data_powolania_zarzad']) ? $row['data_powolania_zarzad'] : null;
-            return true;
-        }
-        return false;
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($row) {
+        $this->id = $row['id'];
+        $this->first_name = $row['first_name'];
+        $this->last_name = $row['last_name'];
+        $this->login = $row['login'];
+        $this->email = $row['email'];
+        $this->role = $row['role'];
+        $this->medical_exam_date = $row['medical_exam_date'];
+        $this->smoke_chamber_date = $row['smoke_chamber_date'];
+        $this->funkcja_zarzad = $row['funkcja_zarzad'];
+        $this->data_powolania_zarzad = $row['data_powolania_zarzad'];
+        return true;
+    }
+    return false;
     }
 
     // Tworzenie nowego użytkownika
@@ -79,9 +95,9 @@ class User {
             $this->conn->beginTransaction();
 
             $query = "INSERT INTO " . $this->table_name . " 
-                      (first_name, last_name, login, email, password, role, medical_exam_date, smoke_chamber_date) 
+                      (first_name, last_name, login, email, password, role) 
                       VALUES 
-                      (:first_name, :last_name, :login, :email, :password, :role, :medical_exam_date, :smoke_chamber_date)";
+                      (:first_name, :last_name, :login, :email, :password, :role)";
 
             $stmt = $this->conn->prepare($query);
 
@@ -97,8 +113,7 @@ class User {
             $stmt->bindParam(':email', $this->email);
             $stmt->bindParam(':password', $this->password);
             $stmt->bindParam(':role', $this->role);
-            $stmt->bindParam(':medical_exam_date', $this->medical_exam_date);
-            $stmt->bindParam(':smoke_chamber_date', $this->smoke_chamber_date);
+            
 
             $stmt->execute();
             
@@ -142,9 +157,7 @@ class User {
                           last_name = :last_name, 
                           login = :login, 
                           email = :email, 
-                          role = :role, 
-                          medical_exam_date = :medical_exam_date, 
-                          smoke_chamber_date = :smoke_chamber_date
+                          role = :role
                       WHERE id = :id";
 
             $stmt = $this->conn->prepare($query);
@@ -160,8 +173,6 @@ class User {
             $stmt->bindParam(':login', $this->login);
             $stmt->bindParam(':email', $this->email);
             $stmt->bindParam(':role', $this->role);
-            $stmt->bindParam(':medical_exam_date', $this->medical_exam_date);
-            $stmt->bindParam(':smoke_chamber_date', $this->smoke_chamber_date);
             $stmt->bindParam(':id', $this->id);
 
             $stmt->execute();
@@ -251,5 +262,55 @@ class User {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    
+    public function getMedicalHistory($userId) {
+        
+        $query = "SELECT id, date_from, date_to, notes, created_at 
+                  FROM medical_exams 
+                  WHERE user_id = :user_id 
+                  ORDER BY date_to DESC";
+                  
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([':user_id' => $userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    
+    public function getSmokeChamberHistory($userId) {
+        $query = "SELECT id, date_from, date_to, notes, created_at 
+                  FROM smoke_chamber_tests 
+                  WHERE user_id = :user_id 
+                  ORDER BY date_to DESC";
+                  
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([':user_id' => $userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // --- FUNKCJE DO ZAPISU BADAŃ I KOMORY ---
+    public function addMedicalExam($user_id, $date_from, $date_to, $notes = null) {
+        $query = "INSERT INTO medical_exams (user_id, date_from, date_to, notes) 
+                  VALUES (:user_id, :date_from, :date_to, :notes)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':date_from', $date_from);
+        $stmt->bindParam(':date_to', $date_to);
+        $stmt->bindParam(':notes', $notes);
+        return $stmt->execute();
+    }
+
+    public function addSmokeChamberTest($user_id, $date_from, $date_to, $notes = null) {
+        $query = "INSERT INTO smoke_chamber_tests (user_id, date_from, date_to, notes) 
+                  VALUES (:user_id, :date_from, :date_to, :notes)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':date_from', $date_from);
+        $stmt->bindParam(':date_to', $date_to);
+        $stmt->bindParam(':notes', $notes);
+        return $stmt->execute();
+    }
+
+
+
 }
 ?>

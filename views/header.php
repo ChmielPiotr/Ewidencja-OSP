@@ -41,6 +41,10 @@
             <p class="text-white-50 small mt-4 mb-2 text-uppercase">Administracja</p>
             <a href="index.php?action=index"><i class="bi bi-people me-2"></i> Lista Druhów</a>
             <a href="index.php?action=vehicles"><i class="bi bi-truck me-2"></i> Wozy i Sprzęt</a>
+            <a href="index.php?action=exams"><i class="bi bi-heart-pulse me-2"></i> Badania i Szkolenia</a>
+            <a href="index.php?action=incidents"><i class="bi bi-fire me-2"></i> Akcje Ratownicze</a>
+            <a href="index.php?action=works"><i class="bi bi-hammer me-2"></i> Prace Gospodarcze</a>
+            <a href="index.php?action=drills"><i class="bi bi-journal-medical me-2"></i> Ćwiczenia OSP</a>
         <?php endif; ?>
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'superadmin'): ?>
             <p class="text-white-50 small mt-4 mb-2 text-uppercase">Logi Systemowe</p>

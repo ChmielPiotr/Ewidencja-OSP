@@ -1,51 +1,56 @@
 <?php include 'views/header.php'; ?>
 
-<div class="card shadow-sm border-0" style="max-width: 600px; margin: 0 auto;">
+<div class="card shadow-sm border-0" style="max-width: 1000px; margin: 0 auto;">
     <div class="card-header bg-success text-white">
-        <h5 class="mb-0"><i class="bi bi-person-plus"></i> Dodaj strażaka do podziału</h5>
+        <h5 class="mb-0"><i class="bi bi-person-plus"></i> Dodaj nowego strażaka</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body p-4">
+        
         <?php if (isset($blad)): ?>
             <div class="alert alert-danger"><?= $blad ?></div>
         <?php endif; ?>
 
         <form action="index.php?action=add" method="POST">
             
-            <div class="mb-3">
-                <label class="form-label">Imię</label>
-                <input type="text" name="first_name" class="form-control" required>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Imię</label>
+                    <input type="text" name="first_name" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nazwisko</label>
+                    <input type="text" name="last_name" class="form-control" required>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Nazwisko</label>
-                <input type="text" name="last_name" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Login w systemie (wymagany)</label>
-                <input type="text" name="login" class="form-control" required placeholder="np. j.kowalski">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">E-mail (opcjonalny)</label>
-                <input type="email" name="email" class="form-control" placeholder="Tylko jeśli druh ma maila">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Hasło startowe</label>
-                <input type="password" name="password" class="form-control" required>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Login w systemie (wymagany)</label>
+                    <input type="text" name="login" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Hasło startowe</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">E-mail (opcjonalny)</label>
+                    <input type="email" name="email" class="form-control">
+                </div>
             </div>
 
             <div class="mb-3 border border-warning p-3 rounded bg-light">
                 <label class="form-label fw-bold">Uprawnienia w systemie</label>
                 <select name="role" class="form-select border-warning">
-                    <option value="user">Zwykły Strażak (tylko podgląd swoich dat)</option>
+                    <option value="user" selected>Zwykły Strażak</option>
                     <option value="admin">Administrator (Naczelnik)</option>
                 </select>
+                <div class="form-text">Administrator ma dostęp do edycji wszystkich danych. Zwykły strażak widzi tylko podgląd.</div>
             </div>
-
-            <div class="mb-3 border border-danger p-3 rounded bg-white shadow-sm">
-                <label class="form-label fw-bold text-danger"><i class="bi bi-bank"></i> Przynależność do Zarządu OSP</label>
+            
+            <hr>
+            
+            <div class="mb-4 border border-danger p-3 rounded bg-white shadow-sm">
+                <label class="form-label fw-bold text-danger"><i class="bi bi-bank"></i> Przynależność do Zarządu OSP (Opcjonalnie)</label>
                 <div class="row">
                     <div class="col-md-6 mb-2">
                         <label class="form-label small">Funkcja w Zarządzie</label>
@@ -67,23 +72,13 @@
                     </div>
                 </div>
             </div>
-            <hr>
-
-            <div class="mb-3">
-                <label class="form-label">Badania lekarskie (ważne do)</label>
-                <input type="date" name="medical_exam" class="form-control">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Komora dymowa (ważna do)</label>
-                <input type="date" name="smoke_chamber" class="form-control">
-            </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="index.php?action=index" class="btn btn-secondary">Wróć</a>
-                <button type="submit" class="btn btn-success">Zapisz strażaka</button>
+                <a href="index.php?action=index" class="btn btn-secondary">Anuluj i Wróć</a>
+                <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-person-check"></i> Dodaj strażaka do bazy</button>
             </div>
         </form>
+
     </div>
 </div>
 
