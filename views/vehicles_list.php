@@ -82,8 +82,9 @@
                     <tr>
                         <th class="ps-3">Nazwa sprzętu</th>
                         <th>Ilość</th>
-                        <th>Przydział (Gdzie się znajduje)</th>
+                        <th>Przydział (Gdzie)</th>
                         <th>Stan techniczny</th>
+                        <th>Ważność legalizacji</th>
                         <th>Uwagi</th>
                         <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'superadmin'): ?>
                             <th class="text-end pe-3">Akcje</th>
@@ -111,7 +112,30 @@
                                     ?>
                                     <span class="badge bg-<?= $kolor ?>"><?= $s['stan'] ?></span>
                                 </td>
+                                
+                                <td>
+                                    <?php if (!empty($s['data_przegladu'])): ?>
+                                        <?php 
+                                            $dzis = new DateTime();
+                                            $przeglad = new DateTime($s['data_przegladu']);
+                                            $roznica = $dzis->diff($przeglad)->days;
+                                            $czy_po_terminie = $przeglad < $dzis;
+                                            
+                                            if ($czy_po_terminie) {
+                                                echo '<span class="text-danger fw-bold" title="Przegląd wygasł!"><i class="bi bi-exclamation-triangle-fill"></i> ' . date('d.m.Y', strtotime($s['data_przegladu'])) . '</span>';
+                                            } elseif ($roznica <= 30) {
+                                                echo '<span class="text-warning text-dark fw-bold" title="Zbliża się termin przeglądu"><i class="bi bi-clock-history"></i> ' . date('d.m.Y', strtotime($s['data_przegladu'])) . '</span>';
+                                            } else {
+                                                echo '<span class="text-success"><i class="bi bi-check-circle"></i> ' . date('d.m.Y', strtotime($s['data_przegladu'])) . '</span>';
+                                            }
+                                        ?>
+                                    <?php else: ?>
+                                        <span class="text-muted small">-</span>
+                                    <?php endif; ?>
+                                </td>
+
                                 <td class="text-muted small"><?= htmlspecialchars($s['uwagi'] ?? '') ?></td>
+                                
                                 <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'superadmin'): ?>
                                     <td class="text-end pe-3">
                                         <a href="index.php?action=edit_equipment&id=<?= $s['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
@@ -121,7 +145,7 @@
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="6" class="text-center py-4 text-muted">Brak sprzętu w ewidencji.</td></tr>
+                        <tr><td colspan="7" class="text-center py-4 text-muted">Brak sprzętu w ewidencji.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>

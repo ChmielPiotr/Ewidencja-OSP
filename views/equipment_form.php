@@ -9,6 +9,7 @@
                 <label class="form-label">Nazwa sprzętu</label>
                 <input type="text" name="nazwa" class="form-control" value="<?= htmlspecialchars($sprzet['nazwa'] ?? '') ?>" required>
             </div>
+            
             <div class="row mb-3">
                 <div class="col-6">
                     <label class="form-label">Ilość (szt.)</label>
@@ -23,22 +24,31 @@
                     </select>
                 </div>
             </div>
+
             <div class="mb-3 border border-danger rounded p-3 bg-light">
+                <label class="form-label text-danger fw-bold"><i class="bi bi-calendar-check"></i> Data następnego przeglądu (legalizacji)</label>
+                <input type="date" name="data_przegladu" class="form-control border-danger" value="<?= $sprzet['data_przegladu'] ?? '' ?>">
+                <div class="form-text">Wypełnij tylko dla sprzętu wymagającego okresowych testów (aparaty ODO, butle, gaśnice itp.).</div>
+            </div>
+
+            <div class="mb-3 border border-warning rounded p-3 bg-light">
                 <label class="form-label fw-bold"><i class="bi bi-truck"></i> Przydział do wozu</label>
-                <select name="vehicle_id" class="form-select border-danger">
+                <select name="vehicle_id" class="form-select border-warning">
                     <option value="">-- Brak (Leży w magazynie / remizie) --</option>
                     <?php foreach($pojazdy_lista as $v): ?>
                         <option value="<?= $v['id'] ?>" <?= (($sprzet['vehicle_id']??'') == $v['id']) ? 'selected' : '' ?>><?= $v['numer_operacyjny'] ?> (<?= $v['rodzaj'] ?>)</option>
                     <?php endforeach; ?>
                 </select>
             </div>
+            
             <div class="mb-4">
                 <label class="form-label">Uwagi dodatkowe</label>
                 <textarea name="uwagi" class="form-control" rows="2"><?= htmlspecialchars($sprzet['uwagi'] ?? '') ?></textarea>
             </div>
+            
             <div class="d-flex justify-content-between">
                 <a href="index.php?action=vehicles" class="btn btn-secondary">Anuluj</a>
-                <button type="submit" class="btn <?= isset($sprzet) ? 'btn-primary' : 'btn-warning fw-bold' ?>">Zapisz sprzęt</button>
+                <button type="submit" class="btn <?= isset($sprzet) ? 'btn-primary' : 'btn-warning fw-bold' ?>"><i class="bi bi-save"></i> Zapisz sprzęt</button>
             </div>
         </form>
     </div>

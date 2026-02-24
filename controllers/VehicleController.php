@@ -112,12 +112,16 @@ class VehicleController {
     }
     
 
+    // --- SEKCJA SPRZĘTU ---
+
     public function addEquipment() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->equipmentModel->nazwa = trim($_POST['nazwa']);
             $this->equipmentModel->ilosc = $_POST['ilosc'];
             $this->equipmentModel->stan = $_POST['stan'];
             $this->equipmentModel->vehicle_id = !empty($_POST['vehicle_id']) ? $_POST['vehicle_id'] : null;
+            // NOWOŚĆ: Łapiemy datę przeglądu
+            $this->equipmentModel->data_przegladu = !empty($_POST['data_przegladu']) ? $_POST['data_przegladu'] : null;
             $this->equipmentModel->uwagi = !empty($_POST['uwagi']) ? trim($_POST['uwagi']) : null;
 
             if ($this->equipmentModel->create()) {
@@ -138,6 +142,8 @@ class VehicleController {
             $this->equipmentModel->ilosc = $_POST['ilosc'];
             $this->equipmentModel->stan = $_POST['stan'];
             $this->equipmentModel->vehicle_id = !empty($_POST['vehicle_id']) ? $_POST['vehicle_id'] : null;
+            // NOWOŚĆ: Łapiemy datę przeglądu przy edycji
+            $this->equipmentModel->data_przegladu = !empty($_POST['data_przegladu']) ? $_POST['data_przegladu'] : null;
             $this->equipmentModel->uwagi = !empty($_POST['uwagi']) ? trim($_POST['uwagi']) : null;
 
             if ($this->equipmentModel->update()) {
@@ -148,7 +154,17 @@ class VehicleController {
             $this->equipmentModel->readOne($this->equipmentModel->id);
         }
 
-        $sprzet = ['id' => $this->equipmentModel->id, 'nazwa' => $this->equipmentModel->nazwa, 'ilosc' => $this->equipmentModel->ilosc, 'stan' => $this->equipmentModel->stan, 'vehicle_id' => $this->equipmentModel->vehicle_id, 'uwagi' => $this->equipmentModel->uwagi];
+        // NOWOŚĆ: Przekazujemy datę przeglądu do widoku formularza
+        $sprzet = [
+            'id' => $this->equipmentModel->id, 
+            'nazwa' => $this->equipmentModel->nazwa, 
+            'ilosc' => $this->equipmentModel->ilosc, 
+            'stan' => $this->equipmentModel->stan, 
+            'vehicle_id' => $this->equipmentModel->vehicle_id, 
+            'data_przegladu' => $this->equipmentModel->data_przegladu, // <-- TUTAJ DODAŁEM
+            'uwagi' => $this->equipmentModel->uwagi
+        ];
+        
         $pojazdy_lista = $this->vehicleModel->readAll()->fetchAll(PDO::FETCH_ASSOC);
         require_once 'views/equipment_form.php';
     }
