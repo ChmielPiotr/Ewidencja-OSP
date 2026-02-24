@@ -206,7 +206,7 @@ class UserController {
         
         require_once 'views/reset_password.php';
     }
-    // --- NOWOŚĆ: Eksport całej Ewidencji do pliku PDF ---
+    // --- Eksport całej Ewidencji do pliku PDF ---
     public function exportPdf() {
         // Zabezpieczenie - tylko Admin i SuperAdmin mogą pobierać pełną ewidencję
         if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin')) {
@@ -226,7 +226,7 @@ class UserController {
         require_once 'libs/dompdf/autoload.inc.php';
         $dompdf = new Dompdf\Dompdf();
 
-        // Przygotowujemy kod HTML dokumentu (tabela ze wszystkimi druhami)
+        // kod HTML dokumentu (tabela ze wszystkimi druhami)
         $html = '
         <!DOCTYPE html>
         <html lang="pl">

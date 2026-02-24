@@ -58,9 +58,7 @@ switch ($action) {
     case 'board':
         $boardController->index();
         break;
-    case 'vehicles':
-        $vehicleController->index();
-        break;
+    
 
     // --- AKCJE TYLKO DLA SUPERADMINA 
     case 'logs':
@@ -70,7 +68,11 @@ switch ($action) {
         $logController->exportCsv();
         break;
 
-    // --- AKCJE DLA ADMINA I SUPERADMINA 
+    // --- AKCJE DLA ADMINA I SUPERADMINA (Zarządzanie kontami i wozami)
+    case 'vehicles':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
+        $vehicleController->index();
+        break;
     case 'index':
         if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $userController->index();
@@ -105,31 +107,39 @@ switch ($action) {
         break;
     case 'add_equipment':
         if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
-        $vehicleController->addEquipment(); break;
+        $vehicleController->addEquipment(); 
+        break;
     case 'edit_equipment':
         if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
-        $vehicleController->editEquipment(); break;
+        $vehicleController->editEquipment(); 
+        break;
     case 'delete_equipment':
         if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
-        $vehicleController->deleteEquipment(); break;
+        $vehicleController->deleteEquipment(); 
+        break;
     case 'export_users_pdf':
         if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $userController->exportPdf();
         break;
+
     // --- MODUŁ PRAC GOSPODARCZYCH ---
     case 'works':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $workController->index();
         break;
     case 'addWork':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $workController->add();
         break;
     case 'viewWork':
         $workController->view();
         break;
     case 'editWork':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $workController->edit();
         break;
     case 'deleteWork':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $workController->delete();
         break;
     case 'exportWorksPdf':
@@ -141,15 +151,19 @@ switch ($action) {
 
     // --- MODUŁ ĆWICZEŃ ---
     case 'drills':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $drillController->index();
         break;
     case 'addDrill':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $drillController->add();
         break;
     case 'editDrill':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $drillController->edit();
         break;
     case 'deleteDrill':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $drillController->delete();
         break;
     case 'viewDrill':
@@ -162,23 +176,27 @@ switch ($action) {
         $drillController->exportSinglePdf();
         break;
 
-    
-    // ---------------
+    // --- MODUŁ BADAŃ LEKARSKICH (Całkowicie zablokowany dla zwykłych użytkowników) ---
     case 'exams':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $userController->examsList();
         break;
     case 'userExams':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $userController->userExams();
         break;
     case 'addExam':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $userController->addExam();
         break;
     
-    
+    // --- MODUŁ AKCJI RATOWNICZYCH ---
     case 'incidents':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $incidentController->index();
         break;
     case 'addIncident':
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'superadmin') { header("Location: index.php?action=dashboard"); exit; }
         $incidentController->add();
         break;
     case 'viewIncident':
@@ -190,8 +208,6 @@ switch ($action) {
     case 'exportSingleIncidentPdf':
         $incidentController->exportSinglePdf();
         break;
-
-    
 
     // --- DOMYŚLNIE (Jeśli wpiszesz bzdury w URL) ---
     default:

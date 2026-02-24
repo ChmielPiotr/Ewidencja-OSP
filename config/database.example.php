@@ -1,8 +1,9 @@
 <?php
 class Database {
-    private $host = "";
-    private $db_name = "";
-    private $username = "";
+    //XAMPP to localhost root bez hasła, nazwa bazy osp_system
+    private $host = "localhost";
+    private $db_name = "osp_system";
+    private $username = "root";
     private $password = "";
     public $conn;
 

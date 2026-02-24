@@ -310,6 +310,35 @@ class User {
         return $stmt->execute();
     }
 
+    // --- STATYSTYKI DRUHA NA DASHBOARD ---
+    public function getUserStats($userId) {
+        $stats = [
+            'incidents' => 0,
+            'works' => 0,
+            'drills' => 0
+        ];
+
+        // 1. Liczymy wyjazdy (Akcje ratownicze)
+        $query = "SELECT COUNT(*) FROM incident_participants WHERE user_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$userId]);
+        $stats['incidents'] = $stmt->fetchColumn();
+
+        // 2. Liczymy prace gospodarcze
+        $query = "SELECT COUNT(*) FROM work_participants WHERE user_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$userId]);
+        $stats['works'] = $stmt->fetchColumn();
+
+        // 3. Liczymy ćwiczenia
+        $query = "SELECT COUNT(*) FROM drill_participants WHERE user_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$userId]);
+        $stats['drills'] = $stmt->fetchColumn();
+
+        return $stats;
+    }
+
 
 
 }
