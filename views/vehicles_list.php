@@ -114,23 +114,29 @@
                                 </td>
                                 
                                 <td>
-                                    <?php if (!empty($s['data_przegladu'])): ?>
+                                    <?php if (!empty($s['data_przegladu']) && $s['data_przegladu'] != '0000-00-00'): ?>
                                         <?php 
-                                            $dzis = new DateTime();
+                                            // Zerujemy godziny, żeby liczył równe dni
+                                            $dzis = new DateTime(date('Y-m-d')); 
                                             $przeglad = new DateTime($s['data_przegladu']);
-                                            $roznica = $dzis->diff($przeglad)->days;
-                                            $czy_po_terminie = $przeglad < $dzis;
                                             
-                                            if ($czy_po_terminie) {
-                                                echo '<span class="text-danger fw-bold" title="Przegląd wygasł!"><i class="bi bi-exclamation-triangle-fill"></i> ' . date('d.m.Y', strtotime($s['data_przegladu'])) . '</span>';
-                                            } elseif ($roznica <= 30) {
-                                                echo '<span class="text-warning text-dark fw-bold" title="Zbliża się termin przeglądu"><i class="bi bi-clock-history"></i> ' . date('d.m.Y', strtotime($s['data_przegladu'])) . '</span>';
+                                            // %r%a zwraca dni z plusem (przyszłość) lub minusem (przeszłość)
+                                            $interval = $dzis->diff($przeglad);
+                                            $dni_roznicy = (int)$interval->format('%r%a'); 
+                                            
+                                            if ($dni_roznicy < 0) {
+                                                // Przegląd WYGASŁ (Czerwony badge)
+                                                echo '<span class="badge bg-danger fs-6 py-2"><i class="bi bi-exclamation-octagon-fill"></i> ' . date('d.m.Y', strtotime($s['data_przegladu'])) . ' (po terminie!)</span>';
+                                            } elseif ($dni_roznicy <= 30) {
+                                                // ZBLIŻA SIĘ termin - 30 dni lub mniej (Żółty badge)
+                                                echo '<span class="badge bg-warning text-dark fs-6 py-2"><i class="bi bi-clock-history"></i> ' . date('d.m.Y', strtotime($s['data_przegladu'])) . ' (za ' . $dni_roznicy . ' dni)</span>';
                                             } else {
-                                                echo '<span class="text-success"><i class="bi bi-check-circle"></i> ' . date('d.m.Y', strtotime($s['data_przegladu'])) . '</span>';
+                                                // WSZYSTKO OK - powyżej 30 dni (Zielony badge)
+                                                echo '<span class="badge bg-success fs-6 py-2"><i class="bi bi-check-circle"></i> ' . date('d.m.Y', strtotime($s['data_przegladu'])) . '</span>';
                                             }
                                         ?>
                                     <?php else: ?>
-                                        <span class="text-muted small">-</span>
+                                        <span class="text-muted small">Brak wymogu</span>
                                     <?php endif; ?>
                                 </td>
 
